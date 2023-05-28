@@ -1,0 +1,26 @@
+<%- include('partials/head.ejs') %>
+
+    <main class="my-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-lg-6">
+                    <img src="<%=book.linkBookImage%>" class="img-fluid w-100">
+                </div>
+                <div class="col-12 col-lg-6">
+                    <h1><%= book.title%></h1> 
+                    <hr> <br> <br>
+                    <h2>By: <span class="text-primary"><%= book.author%></span></h2>
+                    <h3>Book ID#: <span class="text-primary"><%= book.id%></span></h3>
+                    <h3>Status: 
+                            <% if (book.completed) { %>
+                                   <span class="text-success">Completed</span>
+                            <%} else { %>
+                                    <span class="text-danger">Incomplete</span>
+                            <% } %>
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </main>
+
+<%- include('partials/foot.ejs') %>

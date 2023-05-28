@@ -1,0 +1,157 @@
+<%- include('partials/head.ejs') %>
+    <main>
+        <div class="container">
+            <div class="row">
+              <div class="col-6 offset-6 text-end py-5">
+                  <a class="btn btn btn-danger" href="user/logout">Logout</a>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6 offset-6">
+                <form action="/books" method="GET">
+                  <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="search" placeholder="Search book" aria-label="Book search" aria-describedby="button-search">
+                    <select class="form-select" name="filter" aria-label="Default select example">
+                      <option selected value="All">All</option>
+                      <option value="Completed">Completed</option>
+                      <option value="Incomplete">Incomplete</option>
+                    </select>
+                    <button class="btn btn-primary" type="submit" id="button-search"><i class="bi bi-search"></i></button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                  <h4 class="my-5">Manage your books!</h4> <button class="btn btn-primary d-inline float-end" data-bs-toggle="modal" data-bs-target="#addNewBook">Add new book</button>
+          
+                    <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Cover</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Author</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% for(let items of data) { %>
+                          <tr>
+                            <th scope="row"><%=items.id%></th>
+                            <td><img src=<%=items.linkBookImage%> width="30" height="45" alt="" srcset=""></td>
+                            <td><%=items.title%></td>
+                            <td><%=items.author%></td>
+                            <td><a href="books/view/<%=items.id%>" type="button" class="btn btn-primary">View</a></td>
+                            <td><button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editmodal<%=items.id%>">Edit</button></td>
+                            <td><button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletemodal<%=items.id%>">Delete</button></td>
+                          </tr>
+
+                          <!-- Delete modal -->
+                          <div class="modal fade" id="deletemodal<%=items.id%>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deletemodalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deletemodalLabel">Delete</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to delete ID: <%=items.id%>?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <form action="books/<%= items.id%>/?_method=DELETE" method="POST">
+                                            <input type="submit" class="btn btn-danger" value="Delete">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+
+                          <!-- Edit modal -->
+                          <div class="modal fade" id="editmodal<%=items.id%>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editmodalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editmodalLabel">Update Book: #<%=items.id%></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="books/update/<%= items.id%>" method="POST">
+                                      <div class="modal-body">
+                                          <div class="mb-3">
+                                            <label class="form-label">Book Title</label>
+                                            <input type="text" class="form-control" name="title" value="<%= items.title%>" aria-describedby="title">
+                                          </div>
+                                          <div class="mb-3">
+                                            <label class="form-label">Book Author</label>
+                                            <input type="text" class="form-control" name="author" value="<%= items.author%>" aria-describedby="author">
+                                          </div>
+                                          <div class="mb-3">
+                                            <label class="form-label">Book Image Link</label>
+                                            <input type="url" class="form-control" name="linkBookImage" value="<%= items.linkBookImage%>" aria-describedby="linkBookImage">
+                                          </div>
+                                          <div class="mb-3">
+                                            <label class="form-label">Status: </label>
+                                            <select class="form-select" name="completed" aria-label="Default select example">
+                                              <option selected value="true">Completed</option>
+                                              <option value="false">Incomplete</option>
+                                            </select>
+                                          </div>
+                                      </div>
+                                      <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                          <input type="submit" class="btn btn-success" value="Update">
+                                      </div>
+                                  </form>
+                                </div>
+                            </div>
+                          </div>
+
+
+                          <% } %>
+                        </tbody>
+                      </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add new Book Modal -->
+    <div class="modal fade" id="addNewBook" tabindex="-1" aria-labelledby="addNewBook" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="addNewBookLabel">Create New Book</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="newBook" action="books/add" method="POST">
+              <div class="mb-3">
+                <label for="title" class="col-form-label">Title:</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+              </div>
+              <div class="mb-3">
+                <label for="order" class="col-form-label">Order No.</label>
+                <input type="number" class="form-control" id="order" name="order" required>
+              </div>
+              <div class="mb-3">
+                <label for="author" class="col-form-label">Author:</label>
+                <input type="text" class="form-control" id="author" name="author" required>
+              </div>
+              <div class="mb-3">
+                <label for="linkBookImage" class="col-form-label">Link of Book Image:</label>
+                <input type="url" class="form-control" id="linkBookImage" name="linkBookImage" required>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" form="newBook" class="btn btn-primary">Create</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<%- include('partials/foot.ejs') %>
